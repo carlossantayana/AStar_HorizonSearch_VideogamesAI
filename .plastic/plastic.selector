@@ -1,0 +1,4 @@
+repository "Practica1_IA@sebaslf02@cloud"
+  path "/"
+    br "/main"
+    co "/main"
