@@ -28,12 +28,6 @@ public class HorizonSearchMind : AbstractPathMind
     private void Awake()
     {
         numEnemies = GameObject.Find("Loader").GetComponent<Loader>().numEnemies;
-
-        for (int i = 0; i < numEnemies; i++)
-        {
-            GameObject enemy = GameObject.Find("Enemy_" + i);
-            enemies.Add(enemy);
-        }
     }
 
     /////////////////////////////////// Metodo HorizonSearchMethod ///////////////////////////////////
@@ -52,7 +46,7 @@ public class HorizonSearchMind : AbstractPathMind
 
             if (goalEnemy(currentNode, enemyPos))
             {
-                foreach (GameObject gameObjetc in enemies)
+                foreach (GameObject gameObject in enemies)
                 {
                     if (gameObject.GetComponent<EnemyBehaviour>().CurrentPosition().RowId == currentNode.y
                         && gameObject.GetComponent<EnemyBehaviour>().CurrentPosition().ColumnId == currentNode.x)
@@ -133,6 +127,7 @@ public class HorizonSearchMind : AbstractPathMind
 
         treeLeafs.Clear();
         openList.Clear();
+        enemies.Clear();
     }
 
     /////////////////////////////////// Metodo GetNextMove ///////////////////////////////////
@@ -141,6 +136,7 @@ public class HorizonSearchMind : AbstractPathMind
     {
         if (plan == null)                                                    //Si la lista plan esta vacia
         {
+            findEnemies();
             horizonSearchMethod(boardInfo, currentPos, goals);                          //Hace una llamada al metodo HorizonSearchMethod
 
             return Locomotion.MoveDirection.None;                               //Le dice al agente que no haga ningun movimiento
@@ -312,5 +308,14 @@ public class HorizonSearchMind : AbstractPathMind
     public void updateNumEnemies()
     {
         numEnemies = enemies.Count();
+    }
+
+    public void findEnemies()
+    {
+        for (int i = 0; i < numEnemies; i++)
+        {
+            GameObject enemy = GameObject.Find("Enemy_" + i);
+            enemies.Add(enemy);
+        }
     }
 }
