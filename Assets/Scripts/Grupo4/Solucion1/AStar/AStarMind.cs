@@ -132,7 +132,7 @@ public class AStarMind : AbstractPathMind
 
     /////////////////////////////////// Metodo expand ///////////////////////////////////
 
-    public void expand(Node currentNode, BoardInfo board, CellInfo[] goals)     //Expande el nodo recibido para obtener a los hijos del mismo
+    public void expand(Node currentNode, BoardInfo board, CellInfo[] goals)     //Expande el nodo recibido para obtener los hijos del mismo
     {
         CellInfo actualPosition = new CellInfo(currentNode.x, currentNode.y);   //Usamos una variable actualPosition que tendrá las coordenas del nodo actual
 

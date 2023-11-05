@@ -18,7 +18,7 @@ public class HorizonSearchMind : AbstractPathMind
     private Stack<Node> openList = new Stack<Node>();
     private List<Node> treeLeafs = new List<Node>();
     private Node plan;
-    private List<GameObject> enemies = new List<GameObject>();
+    private List<CellInfo> enemies = new List<CellInfo>();
     private int numEnemies;
     private int enemiesAlive;
 
@@ -51,40 +51,25 @@ public class HorizonSearchMind : AbstractPathMind
 
             Node currentNode = openList.ElementAt(0);
 
-            if (goal(currentNode, enemyPos))
+            //Bucle Profundidad
+            while (openList.Count != 0)
             {
-                for (int i = 0; i < numEnemies; i++)
-                {
-                    if (enemyPos.RowId == enemies.ElementAt(i).GetComponent<EnemyBehaviour>().CurrentPosition().RowId
-                        && enemyPos.ColumnId == enemies.ElementAt(i).GetComponent<EnemyBehaviour>().CurrentPosition().ColumnId)
-                    {
-                        enemies[i] = null;
-                        enemiesAlive--;
-                    }
-                }
-            }
-            else
-            {
-                //Bucle Profundidad
-                while (openList.Count != 0)
-                {
-                    Node currentNodeDepth = openList.Pop();
+                Node currentNodeDepth = openList.Pop();
 
-                    if (currentNodeDepth.g < depth)
+                if (currentNodeDepth.g < depth)
+                {
+                    if (!goal(currentNodeDepth, enemyPos))
                     {
-                        if (!goal(currentNodeDepth, enemyPos))
-                        {
-                            expand(currentNodeDepth, boardInfo, enemyPos);
-                        }
-                        else
-                        {
-                            treeLeafs.Add(currentNodeDepth);
-                        }
+                        expand(currentNodeDepth, boardInfo, enemyPos);
                     }
                     else
                     {
                         treeLeafs.Add(currentNodeDepth);
                     }
+                }
+                else
+                {
+                    treeLeafs.Add(currentNodeDepth);
                 }
             }
         }
@@ -120,18 +105,27 @@ public class HorizonSearchMind : AbstractPathMind
             }
         }
 
-        treeLeafs.Sort();
-
-        plan = treeLeafs.ElementAt(0);
-        
-        while(plan.parent.parent != null)
+        if (treeLeafs.Count != 0)
         {
-            plan = plan.parent;
+            treeLeafs.Sort();
+            plan = treeLeafs.ElementAt(0);
         }
-
+        else
+        {
+            plan = null;
+        }
+        
         if (plan != null)
         {
             Debug.Log("Accion encontrada");
+
+            if (plan.parent != null)
+            {
+                while (plan.parent.parent != null)
+                {
+                    plan = plan.parent;
+                }
+            }
         }
         else
         {
@@ -143,6 +137,7 @@ public class HorizonSearchMind : AbstractPathMind
 
     public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)  //Devuelve el movimiento que debe hacer el agente
     {
+        updateEnemies();
         treeLeafs.Clear();
         openList.Clear();
         
@@ -212,32 +207,22 @@ public class HorizonSearchMind : AbstractPathMind
                 //Calculo de la heuristica del hijo 
                 int heuristic = Math.Abs((objetive.ColumnId - childs[i].ColumnId)) + Math.Abs((objetive.RowId - childs[i].RowId));
 
-                //bool repeatedNode = false;                                      //Variable auxiliar para determinar si un nodo esta repetido
+                bool repeatedNode = false;                                      //Variable auxiliar para determinar si un nodo esta repetido
 
                 Node nodeToInsert = new Node(currentNode, childs[i].ColumnId, childs[i].RowId, heuristic); //Creacion del nodo hijo
 
-                //foreach (Node node in openList)                                 //Se comprueba si el nodo creado es repetido
-                //{
-                //    if (nodeToInsert.x == node.x && nodeToInsert.y == node.y)    //En el caso de que haya un nodo con las mismas coordenadas en la lista abierta
-                //    {
-                //        repeatedNode = true;                                    //Indicamos que se trata de un nodo repetido(Por ejemplo, podria ser el padre)
-                //    }
-                //}
+                foreach (Node node in openList)                                 //Se comprueba si el nodo creado es repetido
+                {
+                    if (nodeToInsert.x == node.x && nodeToInsert.y == node.y)    //En el caso de que haya un nodo con las mismas coordenadas en la lista abierta
+                    {
+                        repeatedNode = true;                                    //Indicamos que se trata de un nodo repetido(Por ejemplo, podria ser el padre)
+                    }
+                }
 
-                //if (!repeatedNode)                                              //En el caso de que el nodo no este repetido
-                //{
+                if (!repeatedNode)                                              //En el caso de que el nodo no este repetido
+                {
                     openList.Push(nodeToInsert);                                 //Se inserta el nodo en la lista abierta por el principio (recorrido en profundidad)
-                //}
-
-                //repeatedNode = false;
-
-                //foreach (Node node in treeLeafs)                                 //Se comprueba si el nodo creado es repetido
-                //{
-                //    if (nodeToInsert.x == node.x && nodeToInsert.y == node.y)    //En el caso de que haya un nodo con las mismas coordenadas en la lista abierta
-                //    {
-                //        repeatedNode = true;                                    //Indicamos que se trata de un nodo repetido(Por ejemplo, podria ser el padre)
-                //    }
-                //}
+                }
             }
         }
     }
@@ -252,8 +237,7 @@ public class HorizonSearchMind : AbstractPathMind
         {
             if (enemies.ElementAt(i) != null)
             {
-                GameObject enemy = enemies.ElementAt(i);
-                CellInfo enemyPos = enemy.GetComponent<EnemyBehaviour>().CurrentPosition();
+                CellInfo enemyPos = enemies.ElementAt(i);
 
                 int distanceToEnemy = Math.Abs((enemyPos.ColumnId - currentPos.ColumnId)) + Math.Abs((enemyPos.RowId - currentPos.RowId));
 
@@ -268,13 +252,40 @@ public class HorizonSearchMind : AbstractPathMind
         return enemyCell;
     }
 
+    ///////////////////////////////////// Metodo updateEnemies //////////////////////////////////////////
+    public void updateEnemies()
+    {
+        for (int i = 0; i < numEnemies; i++)
+        {
+            if(enemies.ElementAt(i) != null)
+            {
+                GameObject enemy = GameObject.Find("Enemy_" + i);
+
+                if(enemy != null)
+                {
+                    CellInfo enemyCell = enemy.GetComponent<EnemyBehaviour>().CurrentPosition();
+
+                    enemies[i] = enemyCell;
+                }
+                else
+                {
+                    enemies[i] = null;
+                    enemiesAlive--;
+                }
+            }
+        }
+    }
+
     ///////////////////////////////////// Metodo findEnemies //////////////////////////////////////////
     public void findEnemies()       //Busca los enemigos en la escena y los agrega a la lista, actualiza el numero de enemigos
     {
         for (int i = 0; i < numEnemies; i++)
         {
             GameObject enemy = GameObject.Find("Enemy_" + i);
-            enemies.Add(enemy);
+
+            CellInfo enemyCell = enemy.GetComponent<EnemyBehaviour>().CurrentPosition();
+
+            enemies.Add(enemyCell);
         }
     }
 }

@@ -41,11 +41,11 @@ public class Node : IComparable<Node>
     
     public int CompareTo(Node other)    //Este metodo permitira ordenar los nodos en funcion del valor de sus variables fStar
     {
-        if (hStar > other.hStar)        //Si el valor de fStar del nodo es mayor que el del otro nodo
+        if (fStar > other.fStar)        //Si el valor de fStar del nodo es mayor que el del otro nodo
         {
             return 1;
         }
-        else if (hStar < other.hStar)   //Si el valor de fStar del nodo es menor que el del otro nodo
+        else if (fStar < other.fStar)   //Si el valor de fStar del nodo es menor que el del otro nodo
         {
             return -1;
         }
