@@ -9,7 +9,7 @@ public class Node : IComparable<Node>
     /////////////////////////////////// Atributos de la clase /////////////////////////////////// 
     
 
-    public Node father;         //Almacena al padre del nodo
+    public Node parent;         //Almacena al padre del nodo
     public int x;               //Almacena la coordenada x de la celda correspondiente al nodo
     public int y;               //Almacena la coordenada y de la celda correspondiente al nodo
     public int g;               //Almacena el coste total para llegar al nodo desde el nodo origen, conocida como g
@@ -18,15 +18,15 @@ public class Node : IComparable<Node>
 
     /////////////////////////////////// Constructor de la Clase /////////////////////////////////// 
     
-    public Node(Node fatherP,int xP, int yP, int hP) 
+    public Node(Node parentP,int xP, int yP, int hP) 
     {
-        father = fatherP;       //Asignamos a la variable father el nodo que se le pasa al constructor
+        parent = parentP;       //Asignamos a la variable parent el nodo que se le pasa al constructor
         x = xP;                 //Asignamos a la variable x la coordenada de la celda pasada en el constructor
         y = yP;                 //Asignamos a la variable y la coordenada de la celda pasada en el constructor
 
-        if (father != null)     //Comprueba si el nodo pasado al constructor es distinto de nulo
+        if (parent != null)     //Comprueba si el nodo pasado al constructor es distinto de nulo
         {
-            g = father.g + 1;   //Si es distinto de nulo, asigamos a g el valor g de su padre mas el coste de ir al nodo en cuestion
+            g = parent.g + 1;   //Si es distinto de nulo, asigamos a g el valor g de su padre mas el coste de ir al nodo en cuestion
         }
         else
         {
@@ -41,11 +41,11 @@ public class Node : IComparable<Node>
     
     public int CompareTo(Node other)    //Este metodo permitira ordenar los nodos en funcion del valor de sus variables fStar
     {
-        if (fStar > other.fStar)        //Si el valor de fStar del nodo es mayor que el del otro nodo
+        if (hStar > other.hStar)        //Si el valor de fStar del nodo es mayor que el del otro nodo
         {
             return 1;
         }
-        else if (fStar < other.fStar)   //Si el valor de fStar del nodo es menor que el del otro nodo
+        else if (hStar < other.hStar)   //Si el valor de fStar del nodo es menor que el del otro nodo
         {
             return -1;
         }

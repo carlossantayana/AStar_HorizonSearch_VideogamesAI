@@ -60,9 +60,9 @@ public class AStarMind : AbstractPathMind
         {
             int i = 0;                                       //Declaramos una variable auxiliar i que tendra como valor inicial cero
 
-            while (plan.ElementAt(i).father != null)         //Mientras el valor de la variable father del nodo actual sea distinto de null
+            while (plan.ElementAt(i).parent != null)         //Mientras el valor de la variable parent del nodo actual sea distinto de null
             {
-                plan.Add(plan.ElementAt(i).father);          //Agregamos a la lista plan al padre referenciado en la variable father, construyendo el plan desde la meta hasta el origen
+                plan.Add(plan.ElementAt(i).parent);          //Agregamos a la lista plan al padre referenciado en la variable parent, construyendo el plan desde la meta hasta el origen
                 i++;                                         //Aumentamos el valor de i
             }
 
@@ -132,9 +132,9 @@ public class AStarMind : AbstractPathMind
 
     /////////////////////////////////// Metodo expand ///////////////////////////////////
 
-    public void expand(Node currentNode, BoardInfo board, CellInfo[] goals) //Expande el nodo recibido para obtener a los hijos del mismo
+    public void expand(Node currentNode, BoardInfo board, CellInfo[] goals)     //Expande el nodo recibido para obtener a los hijos del mismo
     {
-        CellInfo actualPosition = new CellInfo(currentNode.x, currentNode.y);   //Usamos una variable actualPosition que tendrá las coordenas del nodo pasado
+        CellInfo actualPosition = new CellInfo(currentNode.x, currentNode.y);   //Usamos una variable actualPosition que tendrá las coordenas del nodo actual
 
         //Guardamos los hijos del nodo actual en un array
         CellInfo[] childs = actualPosition.WalkableNeighbours(board);           //En un array de CellInfo guardamos lo que devuelve la funcion WalkeableNeighbours
