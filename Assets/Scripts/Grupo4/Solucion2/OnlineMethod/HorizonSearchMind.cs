@@ -117,7 +117,7 @@ public class HorizonSearchMind : AbstractPathMind
 
             if (plan.parent != null)                                                                                                //Si el plan tiene padre
             {
-                while (plan.parent.parent != null)                                                                                  //Mientras el padre de su padre sea distinto de nul
+                while (plan.parent.parent != null)                                                                                  //Mientras el padre de su padre sea distinto de null
                 {
                     plan = plan.parent;                                                                                             //Hacemos que el plan sea su padre
                 }
@@ -281,7 +281,7 @@ public class HorizonSearchMind : AbstractPathMind
     {
         for (int i = 0; i < numEnemies; i++)                                                                //Recorre la lista en función del número de enemigos especificado en el loader
         {
-            GameObject enemy = GameObject.Find("Enemy_" + i);                                               //Se declara una variable a los GameObjects de cada enemigo
+            GameObject enemy = GameObject.Find("Enemy_" + i);                                               //Se declara una variable que almacena a cada enemigo
 
             CellInfo enemyCell = enemy.GetComponent<EnemyBehaviour>().CurrentPosition();                    //Se obtiene su celda
 
