@@ -16,6 +16,8 @@ public class AStarMind : AbstractPathMind
     
     private List<Node> openList = new List<Node>();              //Lista abierta, donde se meteran los nodos no evaluados
     private List<Node> plan = new List<Node>();                  //Lista plan, donde se guardaran los nodos que conforman el plan que debe hacer el agente para llegar a la meta
+    private List<Node> closedList = new List<Node>();            //Lista cerrada, donde se meteran los nodos que ya existen en el arbol
+    private int numNodesExpanded = 0;
 
     /////////////////////////////////// Metodo AStarMethod ///////////////////////////////////
 
@@ -26,6 +28,7 @@ public class AStarMind : AbstractPathMind
         //Primero, creamos el nodo origen, calculamos su heuristica
         int heuristic = Math.Abs((goals[0].ColumnId - currentPos.ColumnId)) + Math.Abs((goals[0].RowId - currentPos.RowId)); // Heuristica utilizada: Suma de Distancias Manhattan
         openList.Add(new Node(null, currentPos.ColumnId, currentPos.RowId, heuristic));                                      // Agregamos el nodo origen creado a la lista abierta
+        closedList.Add(openList.ElementAt(0));
 
         //Bucle A*
         while(openList.Count != 0 && !goalReached){           //Mientras la lista tenga nodos dentro y goalReached valga false
@@ -43,13 +46,14 @@ public class AStarMind : AbstractPathMind
             }
             else                                              //En caso de que currentNode no sea un nodo meta
             {
+                numNodesExpanded++;
                 expand(currentNode, boardInfo, goals);        //Usamos el metodo expand para expandir el nodo
 
                 openList.Sort();                              // Ordenamos la lista abierta con el metodo Sort, que usara el metodo CompareTo de la clase Nodo
             }
 
-            //En el caso de que en la lista abierta haya mas nodos que el resultado de multiplicar el numero de columnas por el numero de filas del tablero o si la posicion de la meta no es walkeable
-            if (openList.Count > (boardInfo.NumColumns * boardInfo.NumRows) || !boardInfo.CellInfos[goals[0].ColumnId,goals[0].RowId].Walkable) 
+            //Control de seguridad. Si se expanden mas de 1000 nodos salimos del bucle
+            if (numNodesExpanded > 1000) 
             {
                 break;                                        //Salimos del bucle
             }
@@ -149,9 +153,9 @@ public class AStarMind : AbstractPathMind
                
                 Node nodeToInsert = new Node(currentNode, childs[i].ColumnId, childs[i].RowId, heuristic); //Creacion del nodo hijo
 
-                foreach (Node node in openList)                                 //Se comprueba si el nodo creado es repetido
+                foreach (Node node in closedList)                                 //Se comprueba si el nodo creado es repetido
                 {
-                    if(nodeToInsert.x == node.x && nodeToInsert.y == node.y)    //En el caso de que haya un nodo con las mismas coordenadas en la lista abierta
+                    if(nodeToInsert.x == node.x && nodeToInsert.y == node.y && nodeToInsert.fStar >= node.fStar)    //En el caso de que haya un nodo con las mismas coordenadas en la lista abierta
                     {
                         repeatedNode = true;                                    //Indicamos que se trata de un nodo repetido(Por ejemplo, podria ser el padre)
                     }
@@ -159,8 +163,8 @@ public class AStarMind : AbstractPathMind
 
                 if (!repeatedNode)                                              //En el caso de que el nodo no este repetido
                 {
-
                     openList.Add(nodeToInsert);                                 //Se inserta el nodo en la lista abierta
+                    closedList.Add(nodeToInsert);
                 }
             }
         }
