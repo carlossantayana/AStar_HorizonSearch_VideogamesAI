@@ -48,10 +48,10 @@ public class AStarMind : AbstractPathMind
                 openList.Sort();                              // Ordenamos la lista abierta con el metodo Sort, que usara el metodo CompareTo de la clase Nodo
             }
 
-            //En el caso de que en la lista abierta hayan mas nodos que el resultado de multiplicar el numero de columnas por el numero de filas del tablero
+            //En el caso de que en la lista abierta haya mas nodos que el resultado de multiplicar el numero de columnas por el numero de filas del tablero
             if (openList.Count > (boardInfo.NumColumns * boardInfo.NumRows)) 
             {
-                Debug.Log("No hay solucion");                 //Mostramos por pantalla que no hay solucion
+                Debug.Log("No hay solucion");                 //Mostramos por la consola que no hay solucion
                 break;                                        //Salimos del bucle
             }
         }
@@ -70,7 +70,7 @@ public class AStarMind : AbstractPathMind
         }
         else                                                 //Si la lista plan esta vacia al terminar el bucle
         {
-            Debug.Log("No hay solucion");                    //Mostramos por pantalla que no hay solucion
+            Debug.Log("No hay solucion");                    //Mostramos por la consola que no hay solucion
         }
     }
 
@@ -134,7 +134,7 @@ public class AStarMind : AbstractPathMind
 
     public void expand(Node currentNode, BoardInfo board, CellInfo[] goals)     //Expande el nodo recibido para obtener los hijos del mismo
     {
-        CellInfo actualPosition = new CellInfo(currentNode.x, currentNode.y);   //Usamos una variable actualPosition que tendrá las coordenas del nodo actual
+        CellInfo actualPosition = new CellInfo(currentNode.x, currentNode.y);   //Usamos una variable actualPosition que tendrá las coordenadas del nodo actual
 
         //Guardamos los hijos del nodo actual en un array
         CellInfo[] childs = actualPosition.WalkableNeighbours(board);           //En un array de CellInfo guardamos lo que devuelve la funcion WalkeableNeighbours
