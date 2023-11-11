@@ -17,7 +17,7 @@ public class AStarMind : AbstractPathMind
     private List<Node> openList = new List<Node>();              //Lista abierta, donde se meteran los nodos no evaluados
     private List<Node> plan = new List<Node>();                  //Lista plan, donde se guardaran los nodos que conforman el plan que debe hacer el agente para llegar a la meta
     private List<Node> closedList = new List<Node>();            //Lista cerrada, donde se meteran los nodos que ya existen en el arbol
-    private int numNodesExpanded = 0;
+    private int numNodesExpanded = 0;                            //Variable que almacena el numero de nodos expandidos. Se inicializa a 0
 
     /////////////////////////////////// Metodo AStarMethod ///////////////////////////////////
 
@@ -28,7 +28,7 @@ public class AStarMind : AbstractPathMind
         //Primero, creamos el nodo origen, calculamos su heuristica
         int heuristic = Math.Abs((goals[0].ColumnId - currentPos.ColumnId)) + Math.Abs((goals[0].RowId - currentPos.RowId)); // Heuristica utilizada: Suma de Distancias Manhattan
         openList.Add(new Node(null, currentPos.ColumnId, currentPos.RowId, heuristic));                                      // Agregamos el nodo origen creado a la lista abierta
-        closedList.Add(openList.ElementAt(0));
+        closedList.Add(openList.ElementAt(0));                //Se añade el nodo a la lista cerrada
 
         //Bucle A*
         while(openList.Count != 0 && !goalReached){           //Mientras la lista tenga nodos dentro y goalReached valga false
@@ -46,7 +46,7 @@ public class AStarMind : AbstractPathMind
             }
             else                                              //En caso de que currentNode no sea un nodo meta
             {
-                numNodesExpanded++;
+                numNodesExpanded++;                           //Vamos a expandir el nodo e incrementamos en 1 el numero de nodos expandidos
                 expand(currentNode, boardInfo, goals);        //Usamos el metodo expand para expandir el nodo
 
                 openList.Sort();                              // Ordenamos la lista abierta con el metodo Sort, que usara el metodo CompareTo de la clase Nodo
@@ -155,7 +155,7 @@ public class AStarMind : AbstractPathMind
 
                 foreach (Node node in closedList)                                 //Se comprueba si el nodo creado es repetido
                 {
-                    if(nodeToInsert.x == node.x && nodeToInsert.y == node.y && nodeToInsert.fStar >= node.fStar)    //En el caso de que haya un nodo con las mismas coordenadas en la lista abierta
+                    if(nodeToInsert.x == node.x && nodeToInsert.y == node.y && nodeToInsert.fStar >= node.fStar)    //En el caso de que haya un nodo con las mismas coordenadas y de peor o igual f* en la lista cerrada
                     {
                         repeatedNode = true;                                    //Indicamos que se trata de un nodo repetido(Por ejemplo, podria ser el padre)
                     }
@@ -164,7 +164,7 @@ public class AStarMind : AbstractPathMind
                 if (!repeatedNode)                                              //En el caso de que el nodo no este repetido
                 {
                     openList.Add(nodeToInsert);                                 //Se inserta el nodo en la lista abierta
-                    closedList.Add(nodeToInsert);
+                    closedList.Add(nodeToInsert);                               //Se inserta el nodo en la lista cerrada
                 }
             }
         }
