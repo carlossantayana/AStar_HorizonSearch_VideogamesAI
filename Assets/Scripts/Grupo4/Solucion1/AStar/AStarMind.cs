@@ -48,10 +48,9 @@ public class AStarMind : AbstractPathMind
                 openList.Sort();                              // Ordenamos la lista abierta con el metodo Sort, que usara el metodo CompareTo de la clase Nodo
             }
 
-            //En el caso de que en la lista abierta haya mas nodos que el resultado de multiplicar el numero de columnas por el numero de filas del tablero
-            if (openList.Count > (boardInfo.NumColumns * boardInfo.NumRows)) 
+            //En el caso de que en la lista abierta haya mas nodos que el resultado de multiplicar el numero de columnas por el numero de filas del tablero o si la posicion de la meta no es walkeable
+            if (openList.Count > (boardInfo.NumColumns * boardInfo.NumRows) || !boardInfo.CellInfos[goals[0].ColumnId,goals[0].RowId].Walkable) 
             {
-                Debug.Log("No hay solucion");                 //Mostramos por la consola que no hay solucion
                 break;                                        //Salimos del bucle
             }
         }
