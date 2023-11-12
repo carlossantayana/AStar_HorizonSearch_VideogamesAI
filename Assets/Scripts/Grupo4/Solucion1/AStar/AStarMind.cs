@@ -16,7 +16,7 @@ public class AStarMind : AbstractPathMind
     
     private List<Node> openList = new List<Node>();              //Lista abierta, donde se meteran los nodos no evaluados
     private List<Node> plan = new List<Node>();                  //Lista plan, donde se guardaran los nodos que conforman el plan que debe hacer el agente para llegar a la meta
-    private List<Node> closedList = new List<Node>();            //Lista cerrada, donde se meteran los nodos que ya existen en el arbol
+    private List<Node> closedList = new List<Node>();            //Lista cerrada, donde se meteran los nodos que ya existen en el arbol y asi evitar repetidos
     private int numNodesExpanded = 0;                            //Variable que almacena el numero de nodos expandidos. Se inicializa a 0
 
     /////////////////////////////////// Metodo AStarMethod ///////////////////////////////////
