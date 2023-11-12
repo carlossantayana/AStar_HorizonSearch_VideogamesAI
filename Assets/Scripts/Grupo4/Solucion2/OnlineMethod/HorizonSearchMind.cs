@@ -16,6 +16,7 @@ public class HorizonSearchMind : AbstractPathMind
     /////////////////////////////////// Atributos de la clase /////////////////////////////////// 
 
     private Stack<Node> openList = new Stack<Node>();               //Lista abierta para cada búsqueda
+    private List<Node> closedList = new List<Node>();               //Lista cerrada, donde se meteran los nodos que ya existen en el arbol y asi evitar repetidos
     private List<Node> treeLeafs = new List<Node>();                //Lista de los nodos terminales en cada búsqueda
     private Node plan;                                              //Nodo usado para almacenar la mejor acción a realizar en cada búsqueda
     private List<CellInfo> enemies = new List<CellInfo>();          //Lista de celdas de enemigos (vivos o no)
@@ -48,7 +49,8 @@ public class HorizonSearchMind : AbstractPathMind
             int heuristic = Math.Abs((enemyPos.ColumnId - currentPos.ColumnId)) + Math.Abs((enemyPos.RowId - currentPos.RowId));   //Heuristica utilizada: Suma de Distancias Manhattan al objetivo (enemigo más cercano)
 
             openList.Push(new Node(null, currentPos.ColumnId, currentPos.RowId, heuristic));                                       //Agregamos el nodo origen creado a la lista abierta
-            
+            closedList.Add(openList.ElementAt(0));                                                                                 //Se añade el nodo a la lista cerrada
+
             //Bucle Profundidad
             while (openList.Count != 0)                                                                                             //Mientras la lista abierta tenga nodos
             {
@@ -77,6 +79,7 @@ public class HorizonSearchMind : AbstractPathMind
             int heuristic = Math.Abs((goals[0].ColumnId - currentPos.ColumnId)) + Math.Abs((goals[0].RowId - currentPos.RowId));    // Heuristica utilizada: Suma de Distancias Manhattan al objetivo (la meta)
 
             openList.Push(new Node(null, currentPos.ColumnId, currentPos.RowId, heuristic));                                        //Agregamos el nodo origen creado a la lista abierta
+            closedList.Add(openList.ElementAt(0));                                                                                 //Se añade el nodo a la lista cerrada
 
             //Bucle Profundidad
             while (openList.Count != 0)                                                                                             //Mientras haya nodos en la lista abierta
@@ -136,8 +139,9 @@ public class HorizonSearchMind : AbstractPathMind
     public override Locomotion.MoveDirection GetNextMove(BoardInfo boardInfo, CellInfo currentPos, CellInfo[] goals)  //Devuelve el movimiento que debe hacer el agente
     {
         updateEnemies();                                                            //Antes de realizar una búsqueda, actualizamos la lista de enemigos
-        treeLeafs.Clear();                                                          //y se limpian las listas de nodos hojas y la lista abierta
+        treeLeafs.Clear();                                                          //y se limpian las listas de nodos hojas, la lista abierta y la lista cerrada
         openList.Clear();
+        closedList.Clear();
 
         horizonSearchMethod(boardInfo, currentPos, goals);                          //Hace una llamada al metodo HorizonSearchMethod
 
@@ -216,9 +220,9 @@ public class HorizonSearchMind : AbstractPathMind
 
                 Node nodeToInsert = new Node(currentNode, childs[i].ColumnId, childs[i].RowId, heuristic); //Creacion del nodo hijo
 
-                foreach (Node node in openList)                                 //Se comprueba si el nodo creado es repetido
+                foreach (Node node in closedList)                                 //Se comprueba si el nodo creado es repetido
                 {
-                    if (nodeToInsert.x == node.x && nodeToInsert.y == node.y)   //En el caso de que haya un nodo con las mismas coordenadas en la lista abierta
+                    if (nodeToInsert.x == node.x && nodeToInsert.y == node.y && nodeToInsert.fStar >= node.fStar)   //En el caso de que haya un nodo con las mismas coordenadas y de peor o igual f* en la lista cerrada
                     {
                         repeatedNode = true;                                    //Indicamos que se trata de un nodo repetido(Por ejemplo, podria ser el padre)
                     }
@@ -227,6 +231,7 @@ public class HorizonSearchMind : AbstractPathMind
                 if (!repeatedNode)                                              //En el caso de que el nodo no este repetido
                 {
                     openList.Push(nodeToInsert);                                //Se inserta el nodo en la lista abierta por el principio (recorrido en profundidad)
+                    closedList.Add(nodeToInsert);                               //Se inserta el nodo en la lista cerrada
                 }
             }
         }
