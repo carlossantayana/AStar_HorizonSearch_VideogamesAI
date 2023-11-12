@@ -161,7 +161,12 @@ public class HorizonSearchMind : AbstractPathMind
                 return Locomotion.MoveDirection.Right;
             }
 
-            return Locomotion.MoveDirection.Left;
+            if (currentPos.ColumnId > move.x && currentPos.RowId == move.y)
+            {
+                return Locomotion.MoveDirection.Left;
+            }
+
+            return Locomotion.MoveDirection.None;
         }
         else                                                                        //En caso de no haber plan, no nos movemos
         {
